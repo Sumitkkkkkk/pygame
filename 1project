@@ -1,0 +1,107 @@
+```
+import pygame
+
+# Initialize Pygame
+pygame.init()
+
+# Set up some constants
+WIDTH, HEIGHT = 800, 600
+PLAYER_SIZE = 50
+ENEMY_SIZE = 50
+BULLET_SIZE = 10
+CAR_SIZE = 50
+HELICOPTER_SIZE = 50
+BUILDING_SIZE = 100
+PARTNER_SIZE = 50
+
+# Set up some variables
+player_x, player_y = WIDTH / 2, HEIGHT / 2
+enemy_x, enemy_y = WIDTH / 2, HEIGHT / 2
+bullets = []
+car_x, car_y = WIDTH / 2, HEIGHT / 2
+helicopter_x, helicopter_y = WIDTH / 2, HEIGHT / 2
+buildings = [
+    {"x": 100, "y": 100},
+    {"x": 300, "y": 100},
+    {"x": 500, "y": 100},
+    {"x": 100, "y": 300},
+    {"x": 300, "y": 300},
+    {"x": 500, "y": 300}
+]
+partner_x, partner_y = WIDTH / 2, HEIGHT / 2
+
+# Set up the display
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+
+# Set up the guns
+guns = [
+    {"name": "Pistol", "damage": 10, "fire_rate": 10},
+    {"name": "Machine Gun", "damage": 5, "fire_rate": 5},
+    {"name": "Shotgun", "damage": 20, "fire_rate": 15}
+]
+current_gun = guns[0]
+
+# Game loop
+while True:
+    # Handle events
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                bullets.append({"x": player_x, "y": player_y, "gun": current_gun})
+
+    # Move the player
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT]:
+        player_x -= 5
+    if keys[pygame.K_RIGHT]:
+        player_x += 5
+    if keys[pygame.K_UP]:
+        player_y -= 5
+    if keys[pygame.K_DOWN]:
+        player_y += 5
+
+    # Move the partner
+    partner_x += 2
+    if partner_x > WIDTH:
+        partner_x = 0
+
+    # Move the enemy
+    enemy_x += 2
+    if enemy_x > WIDTH:
+        enemy_x = 0
+
+    # Move the bullets
+    for bullet in bullets:
+        bullet["x"] += 10
+        if bullet["x"] > WIDTH:
+            bullets.remove(bullet)
+
+    # Move the car
+    car_x += 5
+    if car_x > WIDTH:
+        car_x = 0
+
+    # Move the helicopter
+    helicopter_y += 5
+    if helicopter_y > HEIGHT:
+        helicopter_y = 0
+
+    # Draw everything
+    screen.fill((0, 0, 0))
+    pygame.draw.rect(screen, (255, 0, 0), (player_x, player_y, PLAYER_SIZE, PLAYER_SIZE))
+    pygame.draw.rect(screen, (0, 0, 255), (enemy_x, enemy_y, ENEMY_SIZE, ENEMY_SIZE))
+    for bullet in bullets:
+        pygame.draw.rect(screen, (255, 255, 0), (bullet["x"], bullet["y"], BULLET_SIZE, BULLET_SIZE))
+    pygame.draw.rect(screen, (0, 255, 0), (car_x, car_y, CAR_SIZE, CAR_SIZE))
+    pygame.draw.rect(screen, (255, 0, 255), (helicopter_x, helicopter_y, HELICOPTER_SIZE, HELICOPTER_SIZE))
+    for building in buildings:
+        pygame.draw.rect(screen, (128, 128, 128), (building["x"], building["y"], BUILDING_SIZE, BUILDING_SIZE))
+    pygame.draw.rect(screen, (255, 192, 203), (partner_x, partner_y, PARTNER_SIZE, PARTNER_SIZE))
+
+    # Update the display
+    pygame.display.flip()
+    pygame.time.Clock().tick(60)
+```
